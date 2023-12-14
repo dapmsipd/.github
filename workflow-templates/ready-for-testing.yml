@@ -1,0 +1,25 @@
+name: Ready for Testing
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  ready-for-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set task status to "ready for testing"
+        run: |
+          # Get the pull request number
+          PR_NUMBER=$(echo "${{ github.event.number }}")
+
+          # Use the GitHub REST API to update the project card
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.inertia-preview+json" \
+            "https://api.github.com/projects/columns/cards" \
+            -d '{"content_type": "PullRequest", "content_id": '$PR_NUMBER', "column_id": '{COLUMN_ID}', "note": "Ready for Testing"}'
+
+      # Add additional steps as needed for your specific project and workflow
